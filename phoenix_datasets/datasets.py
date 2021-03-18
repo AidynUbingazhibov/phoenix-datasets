@@ -6,7 +6,8 @@ from functools import partial
 from PIL import Image
 from torchvision import transforms
 from collections import defaultdict
-
+import albumentations as albu
+from albumentations.pytorch import ToTensor
 
 class defaultdict_with_warning(defaultdict):
     warned = set()
@@ -56,14 +57,14 @@ class VideoTextDataset(Dataset):
 
         self.data_frame = self.corpus.load_data_frame(split)
         self.vocab = vocab or self.corpus.create_vocab()
-        self.transform = transforms.Compose(
+        self.transform = albu.Compose(
             [
-                transforms.Resize(base_size),
-                transforms.RandomCrop(crop_size)
+                albu.Resize(base_size),
+                albu.RandomCrop(crop_size)
                 if random_crop
-                else transforms.CenterCrop(crop_size),
-                transforms.ToTensor(),
-                transforms.Normalize(self.Corpus.mean, self.Corpus.std),
+                else albu.CenterCrop(crop_size),
+                ToTensor(),
+                albu.Normalize(self.Corpus.mean, self.Corpus.std),
             ]
         )
 
